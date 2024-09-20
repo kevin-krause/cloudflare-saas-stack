@@ -25,7 +25,7 @@ export default async function Page() {
 
     // Insert the comment into the database
     await db.insert(comments).values({
-      author: author,
+      author,
       body,
       post_slug,
     });
@@ -46,14 +46,8 @@ export default async function Page() {
       </div>
 
       <div className="max-w-2xl text-start w-full mt-16">
-        Welcome to Cloudflare Next Saas Starter. <br /> Built a full stack app
-        using production-ready tools and frameworks, host on Cloudflare
-        instantly.
-        <br />
-        <br />
-        Here&apos;s what the stack includes:
         <ul className="list-disc mt-4 prose dark:prose-invert">
-          {/* Stack details... */}
+          <li /> Leave a comment them...🙄
         </ul>
         <div className="mt-4 flex flex-col gap-2">
           <h2 className="text-xl font-bold">Comments</h2>
