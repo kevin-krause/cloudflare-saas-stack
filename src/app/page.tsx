@@ -6,6 +6,9 @@ import { comments } from "@/server/db/schema";
 import { getThemeToggler } from "@/lib/theme/get-theme-button";
 import { useState } from "react";
 
+import { InferModel } from "drizzle-orm";
+type Comment = InferModel<typeof comments>;
+
 export const runtime = "edge";
 
 export default async function Page() {
@@ -19,9 +22,9 @@ export default async function Page() {
   // Form submission logic
   async function handleCommentSubmit(data: FormData) {
     "use server";
-    const author = data.get("author");
-    const body = data.get("body");
-    const post_slug = data.get("post_slug");
+    const author = data.get("author") as string;
+    const body = data.get("body") as string;
+    const post_slug = data.get("post_slug") as string;
 
     // Insert the comment into the database
     await db.insert(comments).values({
