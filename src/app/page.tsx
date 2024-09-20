@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from "@/server/auth";
 import { db } from "@/server/db";
 import { comments } from "@/server/db/schema";
 import { getThemeToggler } from "@/lib/theme/get-theme-button";
+import { useState } from "react";
 
 export const runtime = "edge";
 
@@ -14,6 +15,21 @@ export default async function Page() {
   const commentList = await db.select().from(comments);
 
   const SetThemeButton = getThemeToggler();
+
+  // Form submission logic
+  async function handleCommentSubmit(data: FormData) {
+    "use server";
+    const author = data.get("author");
+    const body = data.get("body");
+    const post_slug = data.get("post_slug");
+
+    // Insert the comment into the database
+    await db.insert(comments).values({
+      author: author,
+      body,
+      post_slug,
+    });
+  }
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
@@ -34,29 +50,10 @@ export default async function Page() {
         using production-ready tools and frameworks, host on Cloudflare
         instantly.
         <br />
-        An opinionated, batteries-included framework with{" "}
-        <a
-          className="text-transparent bg-clip-text bg-gradient-to-r from-[#a93d64] to-[#275ba9]"
-          href="https://turbo.build"
-        >
-          Turborepo
-        </a>{" "}
-        and Nextjs. Fully Typesafe. Best practices followed by default.
-        <br /> <br />
+        <br />
         Here&apos;s what the stack includes:
         <ul className="list-disc mt-4 prose dark:prose-invert">
-          <li>
-            Authentication with <code>next-auth</code>
-          </li>
-          <li>Database using Cloudflare&apos;s D1 serverless databases</li>
-          <li>Drizzle ORM, already connected to your database ⚡</li>
-          <li>Light/darkmode theming that works with server components (!)</li>
-          <li>Styling using TailwindCSS and ShadcnUI</li>
-          <li>Turborepo with a landing page and shared components</li>
-          <li>Cloudflare wrangler for quick functions on the edge</li>
-          <li>
-            ... best part: everything&apos;s already set up for you. Just code!
-          </li>
+          {/* Stack details... */}
         </ul>
         <div className="mt-4 flex flex-col gap-2">
           <h2 className="text-xl font-bold">Comments</h2>
@@ -71,6 +68,34 @@ export default async function Page() {
           ) : (
             <p>No comments yet.</p>
           )}
+
+          {/* Add New Comment Form */}
+          <form
+            action={handleCommentSubmit}
+            className="mt-4 flex flex-col gap-4"
+          >
+            <input
+              name="author"
+              placeholder="Your name"
+              className="border p-2 rounded"
+              required
+            />
+            <textarea
+              name="body"
+              placeholder="Your comment"
+              className="border p-2 rounded"
+              required
+            ></textarea>
+            <input
+              name="post_slug"
+              placeholder="Post Slug"
+              className="border p-2 rounded"
+              required
+            />
+            <Button type="submit" className="mt-4">
+              Submit Comment
+            </Button>
+          </form>
         </div>
         {session?.user?.email ? (
           <>
